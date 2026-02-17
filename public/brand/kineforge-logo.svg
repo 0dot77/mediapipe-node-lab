@@ -1,0 +1,24 @@
+<svg width="760" height="200" viewBox="0 0 760 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="760" height="200" rx="28" fill="#02040A"/>
+  <rect x="1.5" y="1.5" width="757" height="197" rx="26.5" stroke="#1E293B" stroke-width="3"/>
+
+  <g transform="translate(42,40)">
+    <rect x="0" y="0" width="120" height="120" rx="30" fill="#05080F"/>
+    <rect x="0.75" y="0.75" width="118.5" height="118.5" rx="29.25" stroke="#334155" stroke-width="1.5"/>
+    <path d="M30 24V96" stroke="#84CC16" stroke-width="12" stroke-linecap="round"/>
+    <path d="M38 56L70 24" stroke="#BEF264" stroke-width="10" stroke-linecap="round"/>
+    <path d="M38 58L72 96" stroke="#A3E635" stroke-width="10" stroke-linecap="round"/>
+    <path d="M72 34H96L102 40V58L96 64H72" stroke="#D9F99D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="72" cy="34" r="4" fill="#D9F99D"/>
+    <circle cx="102" cy="40" r="4" fill="#D9F99D"/>
+    <circle cx="102" cy="58" r="4" fill="#D9F99D"/>
+    <circle cx="72" cy="64" r="4" fill="#D9F99D"/>
+  </g>
+
+  <text x="196" y="98" fill="#F8FAFC" font-family="Space Grotesk, Sora, sans-serif" font-size="56" font-weight="700" letter-spacing="0.06em">
+    KINEFORGE
+  </text>
+  <text x="198" y="132" fill="#A3E635" font-family="IBM Plex Sans KR, Sora, sans-serif" font-size="16" font-weight="500" letter-spacing="0.18em">
+    NODE FORGE FOR MOTION + MEDIA
+  </text>
+</svg>

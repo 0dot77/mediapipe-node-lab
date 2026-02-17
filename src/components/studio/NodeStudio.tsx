@@ -19,6 +19,7 @@ import type { Edge, ReactFlowInstance } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Activity, Camera, Eye, EyeOff, Grip, Hand, ScanFace, Sparkles, WandSparkles } from 'lucide-react';
 import type { FaceLandmarker, HandLandmarker } from '@mediapipe/tasks-vision';
+import Image from 'next/image';
 
 type NodeKind = 'source' | 'extract' | 'compose' | 'map' | 'output';
 
@@ -1429,12 +1430,17 @@ export function NodeStudio() {
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center px-3 pt-4">
         <header className="pointer-events-auto flex w-full max-w-[1180px] items-end justify-between gap-4 rounded-2xl border border-white/12 bg-slate-950/72 px-4 py-3 shadow-[0_24px_80px_rgba(2,6,23,0.6)] backdrop-blur-xl">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.24em] text-lime-300/85">Kineforge</p>
-            <h1 className="mt-1 text-xl font-semibold text-white">Node Forge for Motion + Media</h1>
-            <p className="mt-1 text-xs text-slate-300/80">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 grid h-11 w-11 place-items-center rounded-xl border border-lime-300/25 bg-slate-900/80">
+              <Image src="/brand/kineforge-mark.svg" alt="Kineforge mark" width={30} height={30} />
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.24em] text-lime-300/85">Kineforge</p>
+              <h1 className="mt-1 text-xl font-semibold text-white">Node Forge for Motion + Media</h1>
+              <p className="mt-1 text-xs text-slate-300/80">
               우측 하단 메인 모니터는 항상 라이브입니다. 보드 빈 공간 더블클릭으로 노드 검색 패널을 열어 언리얼 머티리얼 에디터처럼 꺼내 쓰세요.
-            </p>
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

@@ -1,33 +1,19 @@
 # Kineforge
 
-Node-based performance media prototyping environment for dancers and media artists.
-
-## Brand Decisions
-
-### 1) Logo Tone (Typography + Symbol)
-
-- Wordmark tone: kinetic, industrial, precision-driven
-- Recommended type direction: wide geometric sans + sharp cuts (e.g. "Sora", "Space Grotesk", "Eurostile-like")
-- Symbol direction: `K` monogram fused with signal path / node edge motif
-- Motion cue: subtle horizontal "motion streak" in `K` arm to imply movement tracking
-- Color system: deep black graphite base + lime accent highlights
-
-### 2) One-Line Product Description
+![Kineforge Logo](public/brand/kineforge-logo.svg)
 
 `Kineforge is a node-based live media forge where body motion, AI vision, and GPU visuals are composed in real time.`
 
-### 3) URL / Repository Naming Rules
+Kineforge is built for dancers and media artists who want to prototype interaction pipelines quickly in the browser.
 
-- Canonical project slug: `kineforge`
-- Product website: `kineforge.studio`
-- Web app: `app.kineforge.studio`
-- Docs: `docs.kineforge.studio`
-- Core repository: `github.com/<org>/kineforge`
-- Frontend/app repository (if split): `github.com/<org>/kineforge-web`
-- Examples repository: `github.com/<org>/kineforge-examples`
-- Packages scope (if published): `@kineforge/*`
+## Brand Assets
 
-## Current Stack
+- Logo lockup: `public/brand/kineforge-logo.svg`
+- Symbol mark: `public/brand/kineforge-mark.svg`
+- Canonical slug: `kineforge`
+- Main repository: `https://github.com/0dot77/kineforge`
+
+## Tech Stack
 
 - Next.js (App Router)
 - TypeScript
@@ -35,18 +21,17 @@ Node-based performance media prototyping environment for dancers and media artis
 - React Flow (`@xyflow/react`)
 - MediaPipe Tasks Vision (Face + Hand)
 
-## Current Features
+## What You Can Do
 
-- Live webcam source node
-- Face extraction node (landmarks + jaw metric)
-- Hand extraction node (landmarks + pinch/lift metric)
-- Landmark overlay node
-- Gesture mapper node
-- Stage output node with reactive visuals
-- Per-node debug preview toggle
-- Double-click node picker (material-editor-style)
+- Capture live performer input from webcam
+- Extract face landmarks and expression cues
+- Extract hand landmarks and pinch/lift gestures
+- Compose overlay and mapping stages
+- Monitor reactive stage output in PiP
+- Toggle debug preview per node
+- Double-click empty canvas to open node picker and spawn nodes
 
-## Run
+## Development
 
 ```bash
 git clone https://github.com/0dot77/kineforge.git
@@ -55,9 +40,9 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:4173`
+Open: `http://localhost:4173`
 
-## Build
+## Production Build
 
 ```bash
 npm run build
@@ -67,5 +52,5 @@ npm run start
 ## Notes
 
 - Camera permission is required.
-- Models load from official MediaPipe model storage.
-- If layout looks off, click `Reset Graph`.
+- Models are loaded from official MediaPipe model storage.
+- If graph layout gets messy, click `Reset Graph`.

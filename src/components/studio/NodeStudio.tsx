@@ -115,6 +115,13 @@ interface RuntimeMonitor {
   webgpuLabel: string;
 }
 
+interface CoverTransform {
+  dx: number;
+  dy: number;
+  drawWidth: number;
+  drawHeight: number;
+}
+
 interface WebGpuAdapterInfoLike {
   vendor?: string;
   architecture?: string;
@@ -538,7 +545,7 @@ function drawCoverImage(
   image: CanvasImageSource,
   targetWidth = ctx.canvas.width,
   targetHeight = ctx.canvas.height
-): void {
+): CoverTransform | null {
   const sourceWidth =
     (image as HTMLCanvasElement).width ??
     (image as HTMLVideoElement).videoWidth ??
@@ -550,7 +557,7 @@ function drawCoverImage(
     (image as HTMLImageElement).naturalHeight ??
     0;
 
-  if (!sourceWidth || !sourceHeight || !targetWidth || !targetHeight) return;
+  if (!sourceWidth || !sourceHeight || !targetWidth || !targetHeight) return null;
 
   const sourceRatio = sourceWidth / sourceHeight;
   const targetRatio = targetWidth / targetHeight;
@@ -571,6 +578,21 @@ function drawCoverImage(
   }
 
   ctx.drawImage(image, dx, dy, drawWidth, drawHeight);
+  return { dx, dy, drawWidth, drawHeight };
+}
+
+function normalizeToCanvas(point: Landmark, canvas: HTMLCanvasElement, cover?: CoverTransform): { x: number; y: number } {
+  const nx = clampNumber(Number.isFinite(point.x) ? point.x : 0, 0, 1);
+  const ny = clampNumber(Number.isFinite(point.y) ? point.y : 0, 0, 1);
+
+  if (cover) {
+    return {
+      x: cover.dx + nx * cover.drawWidth,
+      y: cover.dy + ny * cover.drawHeight,
+    };
+  }
+
+  return { x: nx * canvas.width, y: ny * canvas.height };
 }
 
 function drawPoints(
@@ -578,19 +600,21 @@ function drawPoints(
   landmarks: Landmark[],
   color: string,
   pointSize = 2,
-  step = 5
+  step = 5,
+  cover?: CoverTransform
 ): void {
   if (!landmarks.length) return;
   ctx.fillStyle = color;
   for (let i = 0; i < landmarks.length; i += step) {
     const point = landmarks[i];
+    const mapped = normalizeToCanvas(point, ctx.canvas, cover);
     ctx.beginPath();
-    ctx.arc(point.x * ctx.canvas.width, point.y * ctx.canvas.height, pointSize, 0, Math.PI * 2);
+    ctx.arc(mapped.x, mapped.y, pointSize, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
-function drawHandConnections(ctx: CanvasRenderingContext2D, landmarks: Landmark[], color: string): void {
+function drawHandConnections(ctx: CanvasRenderingContext2D, landmarks: Landmark[], color: string, cover?: CoverTransform): void {
   if (!landmarks.length) return;
   ctx.strokeStyle = color;
   ctx.lineWidth = 2;
@@ -599,8 +623,10 @@ function drawHandConnections(ctx: CanvasRenderingContext2D, landmarks: Landmark[
     const a = landmarks[from];
     const b = landmarks[to];
     if (!a || !b) continue;
-    ctx.moveTo(a.x * ctx.canvas.width, a.y * ctx.canvas.height);
-    ctx.lineTo(b.x * ctx.canvas.width, b.y * ctx.canvas.height);
+    const mappedA = normalizeToCanvas(a, ctx.canvas, cover);
+    const mappedB = normalizeToCanvas(b, ctx.canvas, cover);
+    ctx.moveTo(mappedA.x, mappedA.y);
+    ctx.lineTo(mappedB.x, mappedB.y);
   }
   ctx.stroke();
 }
@@ -1152,16 +1178,16 @@ export function NodeStudio() {
 
       ctx.save();
       ctx.globalAlpha = 0.92;
-      drawCoverImage(ctx, sourceFrame, cssWidth, cssHeight);
+      const stageCover = drawCoverImage(ctx, sourceFrame, cssWidth, cssHeight);
       ctx.restore();
 
       if (faces[0]) {
-        drawPoints(ctx, faces[0], '#bef264', 1.35, 5);
+        drawPoints(ctx, faces[0], '#bef264', 1.35, 5, stageCover ?? undefined);
       }
 
       for (const hand of hands) {
-        drawHandConnections(ctx, hand, '#84cc16');
-        drawPoints(ctx, hand, '#d9f99d', 1.8, 1);
+        drawHandConnections(ctx, hand, '#84cc16', stageCover ?? undefined);
+        drawPoints(ctx, hand, '#d9f99d', 1.8, 1, stageCover ?? undefined);
       }
 
       const centerX = cssWidth * clamp(0.5 + controls.tilt * 1.1, 0.08, 0.92);
@@ -1235,9 +1261,9 @@ export function NodeStudio() {
       const facePreview = ensurePreviewContext('face');
       if (facePreview) {
         facePreview.ctx.clearRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
-        drawCoverImage(facePreview.ctx, frameCanvas, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        const faceCover = drawCoverImage(facePreview.ctx, frameCanvas, PREVIEW_WIDTH, PREVIEW_HEIGHT);
         if (faces[0]) {
-          drawPoints(facePreview.ctx, faces[0], '#bef264', 1.4, 5);
+          drawPoints(facePreview.ctx, faces[0], '#bef264', 1.4, 5, faceCover ?? undefined);
         }
         previewUrls.face = canvasToPreviewUrl(facePreview.canvas);
       }
@@ -1245,10 +1271,10 @@ export function NodeStudio() {
       const handPreview = ensurePreviewContext('hand');
       if (handPreview) {
         handPreview.ctx.clearRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
-        drawCoverImage(handPreview.ctx, frameCanvas, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        const handCover = drawCoverImage(handPreview.ctx, frameCanvas, PREVIEW_WIDTH, PREVIEW_HEIGHT);
         for (const hand of hands) {
-          drawHandConnections(handPreview.ctx, hand, '#84cc16');
-          drawPoints(handPreview.ctx, hand, '#d9f99d', 1.9, 1);
+          drawHandConnections(handPreview.ctx, hand, '#84cc16', handCover ?? undefined);
+          drawPoints(handPreview.ctx, hand, '#d9f99d', 1.9, 1, handCover ?? undefined);
         }
         previewUrls.hand = canvasToPreviewUrl(handPreview.canvas);
       }
@@ -1256,13 +1282,13 @@ export function NodeStudio() {
       const overlayPreview = ensurePreviewContext('overlay');
       if (overlayPreview) {
         overlayPreview.ctx.clearRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
-        drawCoverImage(overlayPreview.ctx, frameCanvas, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+        const overlayCover = drawCoverImage(overlayPreview.ctx, frameCanvas, PREVIEW_WIDTH, PREVIEW_HEIGHT);
         if (faces[0]) {
-          drawPoints(overlayPreview.ctx, faces[0], '#bef264', 1.4, 5);
+          drawPoints(overlayPreview.ctx, faces[0], '#bef264', 1.4, 5, overlayCover ?? undefined);
         }
         for (const hand of hands) {
-          drawHandConnections(overlayPreview.ctx, hand, '#84cc16');
-          drawPoints(overlayPreview.ctx, hand, '#d9f99d', 1.9, 1);
+          drawHandConnections(overlayPreview.ctx, hand, '#84cc16', overlayCover ?? undefined);
+          drawPoints(overlayPreview.ctx, hand, '#d9f99d', 1.9, 1, overlayCover ?? undefined);
         }
         previewUrls.overlay = canvasToPreviewUrl(overlayPreview.canvas);
       }
@@ -1699,7 +1725,6 @@ export function NodeStudio() {
           <div className="flex items-center justify-between border-b border-white/10 px-3 py-2.5">
             <div>
               <p className="text-[10px] uppercase tracking-[0.18em] text-lime-200/85">Final Output</p>
-              <p className="text-xs text-slate-300/80">우하단 실시간 결과 캔버스</p>
             </div>
             <span className={`text-[10px] font-semibold uppercase tracking-[0.16em] ${status === 'live' ? 'text-lime-200' : status === 'loading' ? 'text-amber-200' : 'text-slate-300'}`}>
               {status === 'live' ? 'Live' : status === 'loading' ? 'Loading' : 'Idle'}

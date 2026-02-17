@@ -49,7 +49,8 @@ Node-based performance media prototyping environment for dancers and media artis
 ## Run
 
 ```bash
-cd /Users/taeyang/Developer/mediapipe-node-lab
+git clone https://github.com/0dot77/kineforge.git
+cd kineforge
 npm install
 npm run dev
 ```

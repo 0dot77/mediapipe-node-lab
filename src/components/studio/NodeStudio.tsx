@@ -1313,11 +1313,14 @@ export function NodeStudio() {
       const stageCover = drawCoverImage(ctx, sourceFrame, cssWidth, cssHeight);
       ctx.restore();
 
-      if (pipeline.overlayEnabled && faces[0]) {
+      const showFaceLandmarks = pipeline.overlayEnabled || pipeline.faceEnabled;
+      const showHandLandmarks = pipeline.overlayEnabled || pipeline.handEnabled;
+
+      if (showFaceLandmarks && faces[0]) {
         drawPoints(ctx, faces[0], '#bef264', 1.35, 5, stageCover ?? undefined);
       }
 
-      if (pipeline.overlayEnabled) {
+      if (showHandLandmarks) {
         for (const hand of hands) {
           drawHandConnections(ctx, hand, '#84cc16', stageCover ?? undefined);
           drawPoints(ctx, hand, '#d9f99d', 1.8, 1, stageCover ?? undefined);
@@ -1347,7 +1350,11 @@ export function NodeStudio() {
       ctx.fillStyle = '#d9f99d';
       ctx.font = '11px var(--font-body)';
       ctx.fillText(`fps: ${fps.toFixed(1)}`, 20, 28);
-      const modeLabel = `${pipeline.overlayEnabled ? 'overlay' : 'raw'} + ${pipeline.mapperEnabled ? 'mapper' : 'pass'}`;
+      const modeParts: string[] = ['raw'];
+      if (showFaceLandmarks) modeParts.push('face');
+      if (showHandLandmarks) modeParts.push('hand');
+      if (pipeline.mapperEnabled) modeParts.push('mapper');
+      const modeLabel = modeParts.join(' + ');
       ctx.fillText(`mode: ${modeLabel}`, 20, 44);
     },
     []

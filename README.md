@@ -1,21 +1,52 @@
-# MediaPipe Node Lab
+# Kineforge
 
-Node-based browser prototype for dancers and media artists:
+Node-based performance media prototyping environment for dancers and media artists.
 
-- webcam input node
-- face extraction node (MediaPipe Face Landmarker)
-- hand extraction node (MediaPipe Hand Landmarker)
-- gesture mapping node
-- stage output node with reactive visuals
+## Brand Decisions
 
-## Tech Stack
+### 1) Logo Tone (Typography + Symbol)
 
+- Wordmark tone: kinetic, industrial, precision-driven
+- Recommended type direction: wide geometric sans + sharp cuts (e.g. "Sora", "Space Grotesk", "Eurostile-like")
+- Symbol direction: `K` monogram fused with signal path / node edge motif
+- Motion cue: subtle horizontal "motion streak" in `K` arm to imply movement tracking
+- Color system: deep black graphite base + lime accent highlights
+
+### 2) One-Line Product Description
+
+`Kineforge is a node-based live media forge where body motion, AI vision, and GPU visuals are composed in real time.`
+
+### 3) URL / Repository Naming Rules
+
+- Canonical project slug: `kineforge`
+- Product website: `kineforge.studio`
+- Web app: `app.kineforge.studio`
+- Docs: `docs.kineforge.studio`
+- Core repository: `github.com/<org>/kineforge`
+- Frontend/app repository (if split): `github.com/<org>/kineforge-web`
+- Examples repository: `github.com/<org>/kineforge-examples`
+- Packages scope (if published): `@kineforge/*`
+
+## Current Stack
+
+- Next.js (App Router)
 - TypeScript
-- Vite
-- LiteGraph.js
-- MediaPipe Tasks Vision
+- Tailwind CSS v4
+- React Flow (`@xyflow/react`)
+- MediaPipe Tasks Vision (Face + Hand)
 
-## Run (Dev)
+## Current Features
+
+- Live webcam source node
+- Face extraction node (landmarks + jaw metric)
+- Hand extraction node (landmarks + pinch/lift metric)
+- Landmark overlay node
+- Gesture mapper node
+- Stage output node with reactive visuals
+- Per-node debug preview toggle
+- Double-click node picker (material-editor-style)
+
+## Run
 
 ```bash
 cd /Users/taeyang/Developer/mediapipe-node-lab
@@ -23,31 +54,17 @@ npm install
 npm run dev
 ```
 
-Open:
-
-`http://localhost:4173`
+Open `http://localhost:4173`
 
 ## Build
 
 ```bash
 npm run build
-npm run preview
+npm run start
 ```
-
-## Graph Overview
-
-Default graph is auto-created on startup:
-
-`Webcam Source -> Face Extract`
-`Webcam Source -> Hand Extract`
-`(Webcam + Face + Hand) -> Landmark Overlay`
-`(Face metrics + Hand metrics) -> Gesture Mapper -> Stage Output`
-
-If the graph ever disappears, click `Reset Graph`.
 
 ## Notes
 
-- Browser camera permission is required.
-- Models are loaded from official MediaPipe model storage:
-  - face: `face_landmarker.task`
-  - hand: `hand_landmarker.task`
+- Camera permission is required.
+- Models load from official MediaPipe model storage.
+- If layout looks off, click `Reset Graph`.
